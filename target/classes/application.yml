@@ -1,0 +1,4 @@
+application:
+  security:
+    jwt:
+      secret-key: 9F62255C96DAD56F3D9EDEF990EB8C6C6344E9B8F5876EA0F87AB31C92871AE4

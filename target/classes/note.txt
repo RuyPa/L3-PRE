@@ -1,0 +1,8 @@
+2024-08-07
+1. anh cho em hỏi khi lãnh đạo thao tác với bản ghi thì có cần chia ra thành các api tương ứng với các thao tác không ạ (ví dụ api chấp thuận, api từ chối, vân vân)? hay là chỉ cần 1 api update bản ghi đó thôi ạ?
+2. anh Linh có hỏi em 1 câu khá hay là khi xong các luồng như đăng ký, hay kết thúc, thì điều gì sẽ xảy ra với nhân viên, có cái gì được cập nhật ở thằng nhân viên đó không để mình nhận biết, cái này em nghĩ sẽ thêm 1 trường nào đó ở tblemployee như là isOfficial, hoặc isTerminated, không biết liệu có ok ko ạ?
+3. khi quản lý tạo mới 1 bản ghi đăng ký (status = NEW) cho 1 nhaan viên, thì mình có thể tieesp tục tạo mới 1 bản ghi đăng ký cho nhân viên đó không ạ ?
+
+4. với những thông tin dạng ngày như, ngày từ chối, ngày đồng ý ( ko tính cái ngày hẹn), e có nên set cứng trong procedure = now() không anh, hay em vẫn tạo 1 trường để người dùng nhập ngày vào ạ?
+5. anh cho em hỏi sau khi quản lý điền thêm thông tin ở bản ghi "yêu cầu bổ sung" và bấm lưu thì bản ghi này sẽ CẬP NHẬT TRẠNG THÁI như nào ở phía lãnh đạo ạ? "đang xử lý" hả anh ?
+6. lãnh đạo chỉ lấy được những bản ghi có trạng thái "đang xử lí" thôi, hay lấy được cả các bản ghi mà lãnh đạo đó ĐÃ XỬ LÝ như chấp thuận, từ chối, vân vân thế anh?
