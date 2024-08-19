@@ -19,6 +19,6 @@ public class UserController {
 
     @GetMapping("/leaders")
     public L3Response<List<UserResp>> getAllLeaders() {
-        return L3Response.build(userService.getAllLeaders());
+        return new L3Response<>(userService.getAllLeaders());
     }
 }

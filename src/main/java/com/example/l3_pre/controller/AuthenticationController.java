@@ -33,6 +33,6 @@ public class AuthenticationController {
             throw new InvalidInputException(ErrorMessageConstant.UNAUTHORIZED,
                     new ApiMessageError(USERNAME_OR_PASSWORD_INCORRECT));
         }
-        return L3Response.build(jwtService.createToken(username));
+        return new L3Response<>(jwtService.createToken(username));
     }
 }

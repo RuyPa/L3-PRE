@@ -9,11 +9,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static com.example.l3_pre.consts.MessageErrors.USER_NOT_EXIST;
+
 @Constraint(validatedBy = UserIdExistsValidation.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidUserIdExists {
-    String message() default "ID does not exist";
+    String message() default USER_NOT_EXIST;
 
     Class<?>[] groups() default {};
 

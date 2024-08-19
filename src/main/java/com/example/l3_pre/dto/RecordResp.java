@@ -3,25 +3,12 @@ package com.example.l3_pre.dto;
 import com.example.l3_pre.dto.response.BaseDto;
 import com.example.l3_pre.dto.response.RecordTypeResp;
 import com.example.l3_pre.dto.response.StatusTypeResp;
-import com.example.l3_pre.helper.DateHelper;
-import com.example.l3_pre.validation.annotations.ValidDateValue;
-import com.example.l3_pre.validation.annotations.ValidUserIdExists;
-import com.example.l3_pre.validation.groups.OnCreate;
-import com.example.l3_pre.validation.groups.OnSubmit;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.ColumnResult;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-
-import static com.example.l3_pre.consts.MessageErrors.*;
-import static com.example.l3_pre.consts.ValueConst.ID_MIN_VALUE;
 
 @Setter
 @Getter

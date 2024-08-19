@@ -25,7 +25,9 @@ import java.util.List;
 
 import static com.example.l3_pre.consts.Mapper.RECORD_MAPPER;
 import static com.example.l3_pre.consts.MessageErrors.NOT_AUTHORIZED;
+import static com.example.l3_pre.consts.ProcedureName.Record.MANAGER_ID;
 import static com.example.l3_pre.consts.ProcedureName.Record.RECORD_ID;
+import static com.example.l3_pre.consts.ProcedureName.User.LEADER_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -64,10 +66,11 @@ public class RecordServiceImpl implements RecordService {
     }
 
     private RecordResp getOneByManager(Integer id) {
+        recordValidation.checkGetOneByManager(id);
         return getOneByRecordId(id);
     }
 
-    private RecordResp getOneByRecordId(Integer id){
+    private RecordResp getOneByRecordId(Integer id) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(Record.GET_BY_RECORD_ID, RECORD_MAPPER)
                 .registerStoredProcedureParameter(RECORD_ID, Integer.class, ParameterMode.IN)
                 .setParameter(RECORD_ID, id);
@@ -91,14 +94,18 @@ public class RecordServiceImpl implements RecordService {
     private List<RecordResp> getAllByLeader(RecordSearchDto req) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(Record.GET_ALL_BY_LEADER, RECORD_MAPPER)
                 .registerStoredProcedureParameter(Record.RECORD_SEARCH_JSON, String.class, ParameterMode.IN)
-                .setParameter(Record.RECORD_SEARCH_JSON, JsonUtils.convertToJson(req));
+                .registerStoredProcedureParameter(LEADER_ID, Integer.class, ParameterMode.IN)
+                .setParameter(Record.RECORD_SEARCH_JSON, JsonUtils.convertToJson(req))
+                .setParameter(LEADER_ID, getUserIdFromAuthentication());
         return castResultSetToRecordRespList(query);
     }
 
     private List<RecordResp> getAllByManager(RecordSearchDto req) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(Record.GET_ALL_BY_MANAGER, RECORD_MAPPER)
                 .registerStoredProcedureParameter(Record.RECORD_SEARCH_JSON, String.class, ParameterMode.IN)
-                .setParameter(Record.RECORD_SEARCH_JSON, JsonUtils.convertToJson(req));
+                .registerStoredProcedureParameter(MANAGER_ID, Integer.class, ParameterMode.IN)
+                .setParameter(Record.RECORD_SEARCH_JSON, JsonUtils.convertToJson(req))
+                .setParameter(MANAGER_ID, getUserIdFromAuthentication());
         return castResultSetToRecordRespList(query);
     }
 

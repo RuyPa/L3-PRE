@@ -40,4 +40,6 @@ public class MessageErrors {
     public static final String ADDITIONAL_REQUEST_NOT_NULL = "Additional request is not null!";
     public static final String APPOINTMENT_DATE_NOT_NULL = "Appointment date is not null!";
     public static final String NOT_OFFICIAL_EMPLOYEE = "This employee is not official!";
+    public static final String USER_NOT_EXIST = "User is not exist!";
+    public static final String ENDED_REASON_NOT_REQUIRED = "Ended reason is not required!";
 }

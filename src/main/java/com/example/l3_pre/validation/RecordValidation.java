@@ -3,8 +3,10 @@ package com.example.l3_pre.validation;
 import com.example.l3_pre.consts.MessageErrors;
 import com.example.l3_pre.consts.ProcedureName.Record;
 import com.example.l3_pre.consts.RecordStatus;
+import com.example.l3_pre.consts.RecordType;
 import com.example.l3_pre.consts.ValueConst;
-import com.example.l3_pre.dto.request.*;
+import com.example.l3_pre.dto.request.RecordCreateUpdateDto;
+import com.example.l3_pre.dto.request.RecordSearchDto;
 import com.example.l3_pre.dto.response.UserDetailsInfoResp;
 import com.example.l3_pre.exception.InvalidInputException;
 import com.example.l3_pre.exception.NotAllowedException;
@@ -27,6 +29,8 @@ import static com.example.l3_pre.consts.MessageErrors.*;
 import static com.example.l3_pre.consts.ProcedureName.Record.*;
 import static com.example.l3_pre.consts.ProcedureName.User.EMPLOYEE_ID;
 import static com.example.l3_pre.consts.ProcedureName.User.LEADER_ID;
+import static com.example.l3_pre.consts.RecordType.REGISTRATION;
+import static com.example.l3_pre.consts.RecordType.TERMINATION;
 import static com.example.l3_pre.consts.ValueConst.FALSE_VALUE;
 
 @Component
@@ -51,10 +55,17 @@ public class RecordValidation {
     }
 
     private void checkEndedReason(RecordCreateUpdateDto req) {
-        isOfficialEmployee(req.getEmployeeId());
-        if (req.getRecordTypeId().equals(RecordStatus.TERMINATED.getId()) && ObjectUtils.isEmpty(req.getEndedReason())) {
-            throw new NotNullException(ErrorMessageConstant.BAD_REQUEST,
-                    new ApiMessageError(MessageErrors.ENDED_REASON_NOT_NULL));
+        if(req.getRecordTypeId().equals(RecordType.TERMINATION.getId())){
+            isOfficialEmployee(req.getEmployeeId());
+            if (ObjectUtils.isEmpty(req.getEndedReason())) {
+                throw new NotNullException(ErrorMessageConstant.BAD_REQUEST,
+                        new ApiMessageError(MessageErrors.ENDED_REASON_NOT_NULL));
+            }
+        } else {
+            if(!ObjectUtils.isEmpty(req.getEndedReason())){
+                throw new InvalidInputException(ErrorMessageConstant.BAD_REQUEST,
+                        new ApiMessageError(ENDED_REASON_NOT_REQUIRED));
+            }
         }
     }
 
@@ -62,7 +73,7 @@ public class RecordValidation {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(CHECK_OFFICIAL_EMPLOYEE)
                 .registerStoredProcedureParameter(EMPLOYEE_ID, Integer.class, ParameterMode.IN)
                 .setParameter(EMPLOYEE_ID, employeeId);
-        if(((BigInteger) query.getSingleResult()).longValue() != RecordStatus.OFFICIAL.getId()){
+        if(((BigInteger) query.getSingleResult()).longValue() == FALSE_VALUE){
             throw new NotAllowedException(ErrorMessageConstant.BAD_REQUEST,
                     new ApiMessageError(NOT_OFFICIAL_EMPLOYEE));
         }
@@ -70,8 +81,8 @@ public class RecordValidation {
 
     public void checkGetOneByLeader(Integer id) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery(CHECK_GET_ONE_BY_LEADER)
-                .registerStoredProcedureParameter(LEADER_ID, Integer.class, ParameterMode.IN)
                 .registerStoredProcedureParameter(RECORD_ID, Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter(LEADER_ID, Integer.class, ParameterMode.IN)
                 .setParameter(LEADER_ID, getUserIdFromAuthentication())
                 .setParameter(RECORD_ID, id);
         if(((BigInteger) query.getSingleResult()).longValue() == FALSE_VALUE){
@@ -80,8 +91,16 @@ public class RecordValidation {
         }
     }
 
+    public void checkGetOneByManager(Integer id) {
+        checkAuthorizedFromDatabase(id, CHECK_GET_ONE_BY_MANAGER);
+    }
+
     public void checkUpdate(Integer id) {
-        StoredProcedureQuery query = entityManager.createStoredProcedureQuery(CHECK_UPDATE)
+        checkAuthorizedFromDatabase(id, CHECK_UPDATE);
+    }
+
+    private void checkAuthorizedFromDatabase(Integer id, String storedProcedureName) {
+        StoredProcedureQuery query = entityManager.createStoredProcedureQuery(storedProcedureName)
                 .registerStoredProcedureParameter(RECORD_ID, Integer.class, ParameterMode.IN)
                 .registerStoredProcedureParameter(MANAGER_ID, Integer.class, ParameterMode.IN)
                 .setParameter(RECORD_ID, id)
@@ -97,25 +116,19 @@ public class RecordValidation {
             throw new NotAllowedException(ErrorMessageConstant.BAD_REQUEST,
                     new ApiMessageError(NOT_AUTHORIZED));
         }
+        checkAuthorizedFromDatabase(id, CHECK_GET_ONE_BY_MANAGER);
     }
 
     public void checkReject(Integer id) {
-        isPendingRecord(id);
+        checkGetOneByLeader(id);
     }
 
     public void checkApprove(Integer id) {
-        isPendingRecord(id);
+        checkGetOneByLeader(id);
     }
 
     public void checkAdditionalRequest(Integer id) {
-        isPendingRecord(id);
-    }
-
-    private void isPendingRecord(Integer id){
-        if(!(getRecordStatusId(id)).equals(RecordStatus.PENDING.getId())){
-            throw new NotAllowedException(ErrorMessageConstant.BAD_REQUEST,
-                    new ApiMessageError(NOT_AUTHORIZED));
-        }
+        checkGetOneByLeader(id);
     }
 
     private Integer getRecordStatusId (Integer id){
@@ -129,6 +142,13 @@ public class RecordValidation {
         if(ObjectUtils.isEmpty(req.getRecordTypeId())){
             throw new NotNullException(ErrorMessageConstant.BAD_REQUEST,
                     new ApiMessageError(RECORD_TYPE_ID_NOT_NULL));
+        } else {
+            boolean result = req.getRecordTypeId().equals(REGISTRATION.getId())
+                    || req.getRecordTypeId().equals(TERMINATION.getId());
+            if(!result){
+                throw new InvalidInputException(ErrorMessageConstant.BAD_REQUEST,
+                        new ApiMessageError(RECORD_TYPE_ID_NOT_VALID));
+            }
         }
         if(ObjectUtils.isEmpty(req.getPageIndex())){
             throw new NotNullException(ErrorMessageConstant.BAD_REQUEST,

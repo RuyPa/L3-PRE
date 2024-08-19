@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 import static com.example.l3_pre.consts.MessageErrors.INVALID_OR_EXPIRED_TOKEN;
-import static com.example.l3_pre.consts.ValueConst.VALID_JWT_TIME;
+import static com.example.l3_pre.consts.ValueConst.VALID_JWT_TIME_SECOND;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(Jwts.claims().setSubject(username))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + VALID_JWT_TIME))
+                .setExpiration(new Date(new Date().getTime() + VALID_JWT_TIME_SECOND))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }

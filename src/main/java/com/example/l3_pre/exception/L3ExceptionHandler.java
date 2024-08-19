@@ -28,21 +28,21 @@ public class L3ExceptionHandler {
     @ExceptionHandler(InvalidInputException.class)
     protected ResponseEntity<L3Response<Object>> handleInvalidInputException(InvalidInputException exception) {
         log.info("handle invalid input exception: Msg = {}", exception.getErrorMessage().getMessage(), exception);
-        return new ResponseEntity<>(L3Response.build(exception.getErrorMessage(),
+        return new ResponseEntity<>(new L3Response<>(exception.getErrorMessage(),
                 exception.getApiSubErrors()), HttpStatus.OK);
     }
 
     @ExceptionHandler(NotAllowedException.class)
     protected ResponseEntity<L3Response<Object>> handleNotAllowedException(NotAllowedException exception) {
         log.info("handle not allowed exception: Msg = {}", exception.getErrorMessage().getMessage(), exception);
-        return new ResponseEntity<>(L3Response.build(exception.getErrorMessage(),
+        return new ResponseEntity<>(new L3Response<>(exception.getErrorMessage(),
                 Collections.singletonList(exception.getApiSubError())), HttpStatus.OK);
     }
 
     @ExceptionHandler(NotFoundException.class)
     protected ResponseEntity<L3Response<Object>> handleNotFoundException(NotFoundException notFoundException) {
         log.info("handle not found exception: Msg = {}", notFoundException.getErrorMessage(), notFoundException);
-        return new ResponseEntity<>(L3Response.build(notFoundException.getErrorMessage(),
+        return new ResponseEntity<>(new L3Response<>(notFoundException.getErrorMessage(),
                 Collections.singletonList(notFoundException.getApiSubError())), HttpStatus.OK);
     }
 
@@ -52,7 +52,7 @@ public class L3ExceptionHandler {
         for (ConstraintViolation<?> violation : exception.getConstraintViolations()) {
             errorMessage = violation.getMessage();
         }
-        return new ResponseEntity<>(L3Response.build(NOT_FOUND,
+        return new ResponseEntity<>(new L3Response<>(NOT_FOUND,
                 Collections.singletonList(new ApiMessageError(errorMessage))), HttpStatus.OK);
     }
 
@@ -63,28 +63,28 @@ public class L3ExceptionHandler {
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
             subErrors.add(new ApiMessageError(fieldError.getDefaultMessage()));
         }
-        return new ResponseEntity<>(L3Response.build(BAD_REQUEST, subErrors), HttpStatus.OK);
+        return new ResponseEntity<>(new L3Response<>(BAD_REQUEST, subErrors), HttpStatus.OK);
     }
 
     @ExceptionHandler(SQLException.class)
     protected ResponseEntity<L3Response<Object>> handleSqlException(SQLException exception) {
         log.info("handle sql exception : MSG = {}", exception.getMessage(), exception);
         ApiMessageError apiMessageError = new ApiMessageError(exception.getMessage());
-        return new ResponseEntity<>(L3Response.build(BAD_REQUEST,
+        return new ResponseEntity<>(new L3Response<>(BAD_REQUEST,
                 Collections.singletonList(apiMessageError)), HttpStatus.OK);
     }
 
     @ExceptionHandler(JwtException.class)
     protected ResponseEntity<L3Response<Object>> handleJwtException(JwtException exception) {
         log.info("handle jwt exception : MSG = {}", exception.getMessage(), exception);
-        return new ResponseEntity<>(L3Response.build(UNAUTHORIZED,
+        return new ResponseEntity<>(new L3Response<>(UNAUTHORIZED,
                 Collections.singletonList(new ApiMessageError(exception.getMessage()))), HttpStatus.OK);
     }
 
     @ExceptionHandler(NotNullException.class)
     protected ResponseEntity<L3Response<Object>> handleNotNullException(NotNullException exception) {
         log.info("handle not null exception : MSG = {}", exception.getMessage(), exception);
-        return new ResponseEntity<>(L3Response.build(exception.getErrorMessage(),
+        return new ResponseEntity<>(new L3Response<>(exception.getErrorMessage(),
                 Collections.singletonList(exception.getApiSubError())), HttpStatus.OK);
     }
 }

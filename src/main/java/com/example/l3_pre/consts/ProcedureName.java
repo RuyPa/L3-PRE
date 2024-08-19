@@ -53,5 +53,6 @@ public class ProcedureName {
         public static final String MANAGER_ID = "managerId";
         public static final String CHECK_UPDATE = "checkUpdate";
         public static final String CHECK_OFFICIAL_EMPLOYEE = "checkOfficialEmployee";
+        public static final String CHECK_GET_ONE_BY_MANAGER = "checkGetOneByManager";
     }
 }
